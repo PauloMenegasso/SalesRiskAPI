@@ -41,7 +41,9 @@ public class TransactionHandler : ITransactionHandler
     {
         if (!transaction.IsValid) return 0;
 
-        var merchant = GetMerchant(transaction.Document); 
+        var merchant = GetMerchant(transaction.Document);
+
+        var card = GetCard(transaction);
             
 
         var transactionId = await transactionRepository.InsertOne(transaction);
@@ -59,6 +61,18 @@ public class TransactionHandler : ITransactionHandler
         }
 
         return new Merchant(merchantId, document);
+    }
+
+    private async Task<Card> GetCard(TransactionEntry transaction)
+    {
+        var cardId = await cardHandler.GetCard(transaction);
+
+        if (cardId == 0)
+        {
+            cardId = await cardHandler.InsertCard(transaction);
+        }
+
+        return new Card(cardId, transaction.CardNumber, transaction.TransactionDateTime);
     }
 }
 

@@ -1,6 +1,4 @@
-﻿using TransactionFilter.domain.transaction;
-
-namespace TransactionFilter.business;
+﻿namespace TransactionFilter.business;
 
 public interface IMerchantHandler
 {

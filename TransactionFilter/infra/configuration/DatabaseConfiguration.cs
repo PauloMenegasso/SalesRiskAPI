@@ -1,5 +1,5 @@
 ﻿namespace TransactionFilter.infra.configuration;
-public class Configuration
+public class DatabaseConfiguration
 {
     public string ConnectionString { get; set; }
 }
