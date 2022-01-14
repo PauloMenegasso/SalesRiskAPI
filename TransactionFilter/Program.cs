@@ -1,4 +1,10 @@
 using TransactionFilter.business;
+using TransactionFilter.infra.configuration;
+
+var config = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", false, true)
+    .Build();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +14,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer()
 .AddSwaggerGen()
+
+.AddSingleton(config.GetSection("DataBaseConnection").Get<DatabaseConfiguration>())
 
 .AddScoped<ITransactionHandler, TransactionHandler>();
 

@@ -4,25 +4,14 @@ using Microsoft.Data.SqlClient;
 using TransactionFilter.domain.transaction;
 
 namespace TransactionFilter.infra;
-public interface ITransactionRepository
+public interface ITransactionRepository : IBaseRepository
 {
-    public Task<int> InsertOne(Transaction transaction);
 }
 
-public class TransactionRepository : ITransactionRepository
+public class TransactionRepository : BaseRepository, ITransactionRepository
 {
-    private readonly string connectionString;
-    private readonly SqlConnection connection;
-
-    public TransactionRepository(IConfiguration configuration)
+    public TransactionRepository(IDbProvider dbProvider) : base(dbProvider)
     {
-        this.connectionString = configuration["ConnectionString"];
-        this.connection = new SqlConnection(connectionString);
-        connection.Open();
-    }
-
-    public async Task<int> InsertOne(Transaction transaction)
-    {
-        return await connection.InsertAsync(transaction);
+        sqlConnection.Open();
     }
 }

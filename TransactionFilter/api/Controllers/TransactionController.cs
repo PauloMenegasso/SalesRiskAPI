@@ -18,9 +18,16 @@ public class TransactionController : ControllerBase
     }
 
     [HttpPost("insert")]
-    public async Task<ActionResult> InsertOne([FromBody] Transaction transaction)
+    public async Task<ActionResult> InsertOne([FromBody] TransactionEntry transaction)
     {
         await transactionHandler.InsertOne(transaction);
+        return Ok();
+    }
+
+    [HttpPost("insertMany")]
+    public async Task<ActionResult> InsertMany([FromBody] IEnumerable<TransactionEntry> transactions)
+    {
+        await transactionHandler.InsertMany(transactions);
         return Ok();
     }
 }

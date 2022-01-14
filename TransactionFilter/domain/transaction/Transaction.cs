@@ -1,16 +1,18 @@
-﻿using TransactionFilter.domain.validators;
+﻿using Dapper.Contrib.Extensions;
 
 namespace TransactionFilter.domain.transaction;
+[Table("Transaction.Transactio")]
 public class Transaction
 {
-    private static readonly TransactionValidator Validator = new();
+    
+    [Key]
+    [Computed]
     public long TransactionId { get; set; }
-    public long Amount { get; set; }    
-    public string Document { get; set; }
-    public string CardNumber { get; set; }
+    public long Amount { get; set; }
+    public int MerchantId { get; set; }
+    public long CardId { get; set; }
     public DateTime TransactionDateTime { get; set; }
     public DateTime CreatedAt { get; set; }
-    public string Status { get; set; }
+    //public string Status { get; set; } inserir aprovadas e reprovadas??
 
-    public bool IsVaid => Validator.Validate(this).IsValid;
 }

@@ -6,20 +6,24 @@ namespace TransactionFilter.business;
 
 public interface ITransactionHandler
 {
-    public Task<int> InsertOne(Transaction transaction); 
-    public Task<List<int>> InsertMany(IEnumerable<Transaction> transaction);
+    public Task<int> InsertOne(TransactionEntry transaction); 
+    public Task<List<int>> InsertMany(IEnumerable<TransactionEntry> transaction);
 }
 
 public class TransactionHandler : ITransactionHandler
 {
     private readonly ITransactionRepository transactionRepository;
+    private readonly IMerchantHandler merchantHandler;
+    private readonly ICardHandler cardHandler;
 
-    public TransactionHandler(ITransactionRepository transactionRepository)
+    public TransactionHandler(ITransactionRepository transactionRepository, IMerchantHandler merchantHandler, ICardHandler cardHandler)
     {
         this.transactionRepository = transactionRepository;
+        this.merchantHandler = merchantHandler;
+        this.cardHandler = cardHandler;
     }
 
-    public async Task<List<int>> InsertMany(IEnumerable<Transaction> transactions)
+    public async Task<List<int>> InsertMany(IEnumerable<TransactionEntry> transactions)
     {
         var insertedIds = new List<int>();
         if (!transactions.Any()) return insertedIds;
@@ -33,13 +37,28 @@ public class TransactionHandler : ITransactionHandler
         return insertedIds;
     }
 
-    public async Task<int> InsertOne(Transaction transaction)
+    public async Task<int> InsertOne(TransactionEntry transaction)
     {
-        if (!transaction.IsVaid) return 0;
+        if (!transaction.IsValid) return 0;
+
+        var merchant = GetMerchant(transaction.Document); 
+            
 
         var transactionId = await transactionRepository.InsertOne(transaction);
 
         return transactionId;
+    }
+
+    private async Task<Merchant> GetMerchant(string document)
+    {
+        var merchantId = await merchantHandler.GetMerchant(document);
+        
+        if (merchantId == 0)
+        {
+            merchantId = await merchantHandler.InsertMerchant(document);
+        }
+
+        return new Merchant(merchantId, document);
     }
 }
 
