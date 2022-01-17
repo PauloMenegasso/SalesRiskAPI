@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen()
 
 .AddScoped<ITransactionHandler, TransactionHandler>()
 .AddScoped<IMathHandler, MathHandler>()
+.AddScoped<IRiskHandler, RiskHandler>()
 .AddScoped<ICardHandler, CardHandler>()
 .AddScoped<IMerchantHandler, MerchantHandler>()
 
