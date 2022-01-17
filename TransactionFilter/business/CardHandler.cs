@@ -1,4 +1,5 @@
 ﻿using TransactionFilter.domain.transaction;
+using TransactionFilter.infra;
 
 namespace TransactionFilter.business;
 
@@ -10,13 +11,22 @@ public interface ICardHandler
 
 public class CardHandler : ICardHandler
 {
-    public Task<int> GetCard(TransactionEntry transaction)
+    private readonly ICardRepository cardRepository;
+
+    public CardHandler(ICardRepository cardRepository)
     {
-        throw new NotImplementedException();
+        this.cardRepository = cardRepository;
+    }
+    public async Task<int> GetCard(TransactionEntry transaction)
+    {
+        var card = await cardRepository.GetCardByNumber(transaction.CardNumber);
+
+        return card is not null ? card.CardId : 0;
     }
 
-    public Task<int> InsertCard(TransactionEntry transaction)
+    public async Task<int> InsertCard(TransactionEntry transaction)
     {
-        throw new NotImplementedException();
+        var card = new Card(transaction.CardNumber, transaction.TransactionDateTime);
+        return await cardRepository.InsertAsync(card);
     }
 }

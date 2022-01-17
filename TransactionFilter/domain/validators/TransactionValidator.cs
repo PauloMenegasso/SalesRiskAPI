@@ -9,7 +9,7 @@ internal class TransactionValidator : AbstractValidator<TransactionEntry>
     public TransactionValidator()
     {
         RuleFor(t => t.Amount).GreaterThan(0);
-        RuleFor(t => t.TransactionDateTime).LessThan(DateTime.Now);
+        RuleFor(t => t.TransactionDateTime).LessThan(DateTime.UtcNow);
         //inserir aqui a regra para o Status
     }
 }

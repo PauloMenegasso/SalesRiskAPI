@@ -1,4 +1,5 @@
 using TransactionFilter.business;
+using TransactionFilter.infra;
 using TransactionFilter.infra.configuration;
 
 var config = new ConfigurationBuilder()
@@ -12,12 +13,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer()
-.AddSwaggerGen()
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen()
 
-.AddSingleton(config.GetSection("DataBaseConnection").Get<DatabaseConfiguration>())
 
-.AddScoped<ITransactionHandler, TransactionHandler>();
+.AddScoped<ITransactionHandler, TransactionHandler>()
+.AddScoped<IMathHandler, MathHandler>()
+.AddScoped<ICardHandler, CardHandler>()
+.AddScoped<IMerchantHandler, MerchantHandler>()
+
+.AddScoped<IDbProvider, DbProvider>()
+.AddScoped<IBaseRepository, BaseRepository>()
+.AddScoped<IMerchantRepository, MerchantRepository>()
+.AddScoped<ICardRepository, CardRepository>()
+.AddScoped<ITransactionRepository, TransactionRepository>()
+
+.AddSingleton(config.GetSection("DataBaseConnection").Get<DatabaseConfiguration>());
 
 var app = builder.Build();
 

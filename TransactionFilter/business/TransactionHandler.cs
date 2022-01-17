@@ -6,7 +6,7 @@ namespace TransactionFilter.business;
 
 public interface ITransactionHandler
 {
-    public Task<int> InsertOne(TransactionEntry transaction); 
+    public Task<int> InsertOne(TransactionEntry transaction);
     public Task<List<int>> InsertMany(IEnumerable<TransactionEntry> transaction);
 }
 
@@ -41,20 +41,21 @@ public class TransactionHandler : ITransactionHandler
     {
         if (!transaction.IsValid) return 0;
 
-        var merchant = GetMerchant(transaction.Document);
+        var merchant = await GetMerchant(transaction.Document);
 
-        var card = GetCard(transaction);
-            
+        var card = await GetCard(transaction);
 
-        var transactionId = await transactionRepository.InsertOne(transaction);
+        var sale = new Sale(transaction, merchant, card);
 
-        return transactionId;
+        var saleId = await transactionRepository.InsertAsync(sale);
+
+        return saleId;
     }
 
     private async Task<Merchant> GetMerchant(string document)
     {
         var merchantId = await merchantHandler.GetMerchant(document);
-        
+
         if (merchantId == 0)
         {
             merchantId = await merchantHandler.InsertMerchant(document);

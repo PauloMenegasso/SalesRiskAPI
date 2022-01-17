@@ -1,4 +1,7 @@
-﻿namespace TransactionFilter.business;
+﻿using TransactionFilter.domain.transaction;
+using TransactionFilter.infra;
+
+namespace TransactionFilter.business;
 
 public interface IMerchantHandler
 {
@@ -8,13 +11,30 @@ public interface IMerchantHandler
 }
 public class MerchantHandler : IMerchantHandler
 {
+    private readonly IMerchantRepository merchantRepository;
+
+    public MerchantHandler(IMerchantRepository merchantRepository)
+    {
+        this.merchantRepository = merchantRepository;
+    }
     public async Task<int> GetMerchant(string document)
     {
-        throw new NotImplementedException();
+        var merchant = await merchantRepository.GetMerchantByDocument(document);
+
+        return merchant is not null ? merchant.MerchantId : 0;
     }
 
     public async Task<int> InsertMerchant(string document)
     {
-        throw new NotImplementedException();
+        var merchant = new Merchant(document);
+        try
+        {
+            return await merchantRepository.InsertAsync(merchant);
+        }
+        catch (System.Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
     }
 }
